@@ -1,0 +1,28 @@
+# Android Studio
+.gradle/
+.idea/
+captures/
+local.properties
+
+# Android
+build/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Kotlin
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Mac
+.DS_Store
+
+# Log files
+*.log
