@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.menuapp.data.models.Category
 import com.example.menuapp.data.models.MenuItem
 import com.example.menuapp.data.models.Restaurant
-import com.example.menuapp.data.repository.RestaurantRepository
+import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,7 +20,7 @@ data class ManagementUiState(
 )
 
 class ManagementViewModel(
-    private val repository: RestaurantRepository = RestaurantRepository()
+    private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ManagementUiState())
@@ -32,7 +32,7 @@ class ManagementViewModel(
         loadInitialData()
     }
 
-    fun loadInitialData() {
+    private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val user = repository.getCurrentUser()
@@ -67,7 +67,6 @@ class ManagementViewModel(
         }
     }
 
-    // --- Category Management ---
     fun addCategory(name: String) = viewModelScope.launch {
         restaurantId?.let {
             repository.addCategory(Category(id = 0, name = name, restaurantId = it))
@@ -83,7 +82,6 @@ class ManagementViewModel(
         refreshData()
     }
 
-    // --- Menu Item Management ---
     fun updateMenuItemStock(item: MenuItem, inStock: Boolean) = viewModelScope.launch {
         repository.updateMenuItem(item.copy(inStock = inStock))
         refreshData()
@@ -106,7 +104,6 @@ class ManagementViewModel(
         refreshData()
     }
 
-    // --- Settings Management ---
     fun saveSettings(name: String, parcelCharge: Double) = viewModelScope.launch {
         restaurantId?.let {
             repository.updateRestaurantDetails(it, name, parcelCharge)
@@ -116,8 +113,10 @@ class ManagementViewModel(
 
     fun uploadLogo(bytes: ByteArray, extension: String) = viewModelScope.launch {
         restaurantId?.let {
-            val url = repository.uploadLogo(it, bytes, extension)
-            repository.updateRestaurantLogoUrl(it, url)
+            // In a real app, we'd get a URL back. Here, we just log it.
+            // The UI will refresh and could show a new placeholder if we wanted.
+            println("Simulating logo upload for restaurant $it with $extension file.")
+            // For local, we can't really "upload", so we just refresh.
             refreshData()
         }
     }

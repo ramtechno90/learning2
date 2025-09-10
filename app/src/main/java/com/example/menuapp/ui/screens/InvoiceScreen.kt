@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.menuapp.viewmodels.CartViewModel
@@ -38,7 +37,6 @@ fun InvoiceScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Order Summary
             Text("Order Summary", style = MaterialTheme.typography.headlineSmall)
             Divider(modifier = Modifier.padding(vertical = 8.dp))
             LazyColumn(modifier = Modifier.weight(1f)) {
@@ -58,7 +56,6 @@ fun InvoiceScreen(
                 }
             }
 
-            // Customer Name
             OutlinedTextField(
                 value = customerName,
                 onValueChange = { invoiceViewModel.onCustomerNameChange(it) },
@@ -68,7 +65,6 @@ fun InvoiceScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Place Order Button
             Button(
                 onClick = { invoiceViewModel.placeOrder(cartState) },
                 enabled = customerName.isNotBlank() && orderPlacementState is OrderPlacementState.Idle,
@@ -78,7 +74,6 @@ fun InvoiceScreen(
             }
         }
 
-        // Handle order placement state changes
         when (val state = orderPlacementState) {
             is OrderPlacementState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

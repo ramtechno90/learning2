@@ -56,9 +56,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("com.google.android.material:material:1.11.0") // Added back for base theme
+    implementation("com.google.android.material:material:1.11.0") // For base Activity theme
 
-    // Jetpack Compose Bill of Materials (BOM) - manages versions for Compose libraries
+    // Jetpack Compose Bill of Materials (BOM)
     val composeBom = platform("androidx.compose:compose-bom:2024.02.02")
     implementation(composeBom)
     androidTestImplementation(composeBom)
@@ -68,6 +68,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended") // For more icons
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
@@ -77,16 +78,7 @@ dependencies {
     // ViewModel for Jetpack Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    // Supabase libraries for database, auth, realtime, and storage
-    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.4.0")
-    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.4.0")
-    implementation("io.github.jan-tennert.supabase:realtime-kt:2.4.0")
-    implementation("io.github.jan-tennert.supabase:storage-kt:2.4.0")
-
-    // Ktor client engine for Android (required by supabase-kt)
-    implementation("io.ktor:ktor-client-android:2.3.10")
-
-    // Kotlinx Serialization for JSON handling
+    // Kotlinx Serialization for JSON handling (still useful for data models)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     // Coil for asynchronous image loading

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.menuapp.data.models.CartItem
 import com.example.menuapp.data.models.Order
-import com.example.menuapp.data.repository.RestaurantRepository
+import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -20,12 +20,10 @@ sealed class OrderPlacementState {
 }
 
 /**
- * ViewModel for the [InvoiceScreen].
- *
- * Manages the state for the customer's name and handles the final order placement.
+ * ViewModel for the InvoiceScreen.
  */
 class InvoiceViewModel(
-    private val repository: RestaurantRepository = RestaurantRepository()
+    private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
 ) : ViewModel() {
 
     private val _customerName = MutableStateFlow("")
@@ -38,14 +36,10 @@ class InvoiceViewModel(
         _customerName.value = name
     }
 
-    /**
-     * Places the final order by sending it to the repository.
-     */
     fun placeOrder(cartState: CartUiState) {
         viewModelScope.launch {
             _orderPlacementState.value = OrderPlacementState.Loading
 
-            // 1. Map the ViewModel's CartLineItems to the data model CartItems for the DB
             val orderItems = cartState.lineItems.map { lineItem ->
                 CartItem(
                     menuItemId = lineItem.menuItem.id,
@@ -57,15 +51,13 @@ class InvoiceViewModel(
                 )
             }
 
-            // 2. Create the Order object
-            // The database will fill in id, status, daily_order_number
             val orderToPlace = Order(
-                id = 0, // Will be ignored by DB
+                id = 0,
                 customerName = _customerName.value,
                 total = cartState.total,
                 items = orderItems,
-                status = "Pending", // Default status
-                dailyOrderNumber = 0, // Will be set by DB trigger/default
+                status = "Pending",
+                dailyOrderNumber = 0,
                 restaurantId = cartState.restaurant?.id ?: -1
             )
 
@@ -74,15 +66,8 @@ class InvoiceViewModel(
                 return@launch
             }
 
-            // 3. Call the repository
             val result = repository.placeOrder(orderToPlace)
-
-            // 4. Update the state
-            if (result != null) {
-                _orderPlacementState.value = OrderPlacementState.Success(result)
-            } else {
-                _orderPlacementState.value = OrderPlacementState.Error("Failed to place order. Please try again.")
-            }
+            _orderPlacementState.value = OrderPlacementState.Success(result)
         }
     }
 

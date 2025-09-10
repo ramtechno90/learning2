@@ -4,15 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Represents a customer order from the 'orders' table.
- *
- * @property id The unique identifier for the order.
- * @property customerName The name of the customer who placed the order.
- * @property total The total cost of the order.
- * @property items A list of [CartItem] objects, stored as a JSONB field in the database.
- * @property status The current status of the order (e.g., "Pending", "Accepted").
- * @property dailyOrderNumber A sequential order number for the day.
- * @property restaurantId The ID of the restaurant this order belongs to.
+ * Represents a customer order.
  */
 @Serializable
 data class Order(

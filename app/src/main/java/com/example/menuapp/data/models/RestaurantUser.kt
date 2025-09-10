@@ -4,10 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Represents the link between an admin user and a restaurant from the 'restaurant_users' table.
- *
- * @property userId The unique identifier of the authenticated user (UUID from Supabase Auth).
- * @property restaurantId The ID of the restaurant the user is associated with.
+ * Represents the link between an admin user and a restaurant.
  */
 @Serializable
 data class RestaurantUser(
