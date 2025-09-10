@@ -25,12 +25,9 @@ class ManagementViewModel(
 
     private val _uiState = MutableStateFlow(ManagementUiState())
     val uiState = _uiState.asStateFlow()
-
     private var restaurantId: Long? = null
 
-    init {
-        loadInitialData()
-    }
+    init { loadInitialData() }
 
     private fun loadInitialData() {
         viewModelScope.launch {
@@ -56,20 +53,14 @@ class ManagementViewModel(
             val categories = repository.getCategories(id)
             val menuItems = repository.getMenuItems(id)
             _uiState.update {
-                it.copy(
-                    restaurant = restaurant,
-                    categories = categories,
-                    menuItems = menuItems,
-                    isLoading = false,
-                    error = null
-                )
+                it.copy(restaurant = restaurant, categories = categories, menuItems = menuItems, isLoading = false, error = null)
             }
         }
     }
 
     fun addCategory(name: String) = viewModelScope.launch {
         restaurantId?.let {
-            repository.addCategory(Category(id = 0, name = name, restaurantId = it))
+            repository.addCategory(Category(0, name, it))
             refreshData()
         }
     }
@@ -113,10 +104,7 @@ class ManagementViewModel(
 
     fun uploadLogo(bytes: ByteArray, extension: String) = viewModelScope.launch {
         restaurantId?.let {
-            // In a real app, we'd get a URL back. Here, we just log it.
-            // The UI will refresh and could show a new placeholder if we wanted.
             println("Simulating logo upload for restaurant $it with $extension file.")
-            // For local, we can't really "upload", so we just refresh.
             refreshData()
         }
     }

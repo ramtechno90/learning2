@@ -1,18 +1,14 @@
 package com.example.menuapp.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.menuapp.ui.theme.SwiggyOrange
 
-/**
- * The initial screen of the app, allowing the user to select their role.
- */
 @Composable
 fun RoleSelectionScreen(
     onCustomerSelected: () -> Unit,
@@ -20,40 +16,37 @@ fun RoleSelectionScreen(
 ) {
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text("Welcome!", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
             Text(
-                text = "Welcome to the Restaurant System",
-                style = MaterialTheme.typography.headlineMedium
+                "Your favorite local restaurants, delivered.",
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text("Please select your role to continue:", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(64.dp))
+            Text("Please select your role to continue", style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(
                 onClick = onCustomerSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.buttonColors(containerColor = SwiggyOrange)
             ) {
-                Text("I'm a Customer")
+                Text("Continue as Customer", style = MaterialTheme.typography.bodyLarge)
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(
                 onClick = onAdminSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp)
             ) {
-                Text("I'm an Admin")
+                Text("I'm a Restaurant Admin", style = MaterialTheme.typography.bodyLarge, color = SwiggyOrange)
             }
         }
     }

@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// Represents the state of the MenuScreen UI
 data class MenuUiState(
     val restaurant: Restaurant? = null,
     val categories: List<Category> = emptyList(),
@@ -20,16 +19,9 @@ data class MenuUiState(
     val error: String? = null
 )
 
-/**
- * ViewModel for the MenuScreen.
- */
-class MenuViewModel(
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
-
+class MenuViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
     private val restaurantId: Long = checkNotNull(savedStateHandle["restaurantId"]).toString().toLong()
-
     private val _uiState = MutableStateFlow(MenuUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -46,16 +38,13 @@ class MenuViewModel(
                     _uiState.value = _uiState.value.copy(isLoading = false, error = "Restaurant not found.")
                     return@launch
                 }
-
                 val categories = repository.getCategories(restaurantId)
                 val menuItems = repository.getMenuItems(restaurantId)
-                val groupedMenuItems = menuItems.groupBy { it.category }
-
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     restaurant = restaurantDetails,
                     categories = categories,
-                    menuItems = groupedMenuItems,
+                    menuItems = menuItems.groupBy { it.category },
                     error = null
                 )
             } catch (e: Exception) {

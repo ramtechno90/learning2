@@ -10,6 +10,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.menuapp.ui.theme.SwiggyOrange
 import com.example.menuapp.viewmodels.AdminLoginViewModel
 import com.example.menuapp.viewmodels.AuthResult
 
@@ -24,9 +25,7 @@ fun AdminLoginScreen(
 
     LaunchedEffect(uiState.authResult) {
         when (val result = uiState.authResult) {
-            is AuthResult.Success -> {
-                onLoginSuccess()
-            }
+            is AuthResult.Success -> onLoginSuccess()
             is AuthResult.Error -> {
                 snackbarHostState.showSnackbar(message = result.message)
                 vm.resetAuthResult()
@@ -38,14 +37,14 @@ fun AdminLoginScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(title = { Text("Admin Login") })
+            TopAppBar(
+                title = { Text("Admin Login") },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface, titleContentColor = MaterialTheme.colorScheme.onSurface)
+            )
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -55,7 +54,8 @@ fun AdminLoginScreen(
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
+                singleLine = true,
+                shape = MaterialTheme.shapes.medium
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -65,13 +65,16 @@ fun AdminLoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true
+                singleLine = true,
+                shape = MaterialTheme.shapes.medium
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { vm.login() },
                 enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.buttonColors(containerColor = SwiggyOrange)
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)

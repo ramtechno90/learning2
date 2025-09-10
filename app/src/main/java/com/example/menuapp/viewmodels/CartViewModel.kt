@@ -8,22 +8,15 @@ import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-/**
- * Represents a single line item in the shopping cart.
- */
 data class CartLineItem(
     val menuItem: MenuItem,
     var dineInQuantity: Int = 0,
     var takeawayQuantity: Int = 0,
     var specialInstructions: String = ""
 ) {
-    val totalQuantity: Int
-        get() = dineInQuantity + takeawayQuantity
+    val totalQuantity: Int get() = dineInQuantity + takeawayQuantity
 }
 
-/**
- * Represents the overall state of the shopping cart.
- */
 data class CartUiState(
     val lineItems: List<CartLineItem> = emptyList(),
     val subtotal: Double = 0.0,
@@ -33,9 +26,6 @@ data class CartUiState(
     val restaurant: Restaurant? = null
 )
 
-/**
- * ViewModel to manage the state of the shopping cart.
- */
 class CartViewModel(
     private val restaurantId: Long,
     private val repository: LocalRestaurantRepository
@@ -46,20 +36,15 @@ class CartViewModel(
 
     init {
         viewModelScope.launch {
-            val restaurant = repository.getRestaurant(restaurantId)
-            _uiState.update { it.copy(restaurant = restaurant) }
+            _uiState.update { it.copy(restaurant = repository.getRestaurant(restaurantId)) }
         }
     }
 
     fun addItem(item: MenuItem) {
         val currentItems = _uiState.value.lineItems.toMutableList()
         val existingItem = currentItems.find { it.menuItem.id == item.id }
-
-        if (existingItem != null) {
-            existingItem.dineInQuantity++
-        } else {
-            currentItems.add(CartLineItem(menuItem = item, dineInQuantity = 1))
-        }
+        if (existingItem != null) existingItem.dineInQuantity++
+        else currentItems.add(CartLineItem(menuItem = item, dineInQuantity = 1))
         updateCartState(currentItems)
     }
 
@@ -86,7 +71,7 @@ class CartViewModel(
         val item = currentItems.find { it.menuItem.id == itemId }
         if (item != null) {
             item.specialInstructions = instructions
-            _uiState.update { it.copy(lineItems = item.let{ currentItems }) }
+            _uiState.update { it.copy(lineItems = currentItems) }
         }
     }
 
@@ -94,27 +79,17 @@ class CartViewModel(
         val finalItems = items.filter { it.totalQuantity > 0 }
         val subtotal = finalItems.sumOf { it.menuItem.price * it.totalQuantity }
         val universalParcelCharge = _uiState.value.restaurant?.universalParcelCharge ?: 0.0
-
-        val parcelCharges = finalItems.sumOf {
-            val charge = it.menuItem.parcelCharge ?: universalParcelCharge
-            charge * it.takeawayQuantity
-        }
-
-        val total = subtotal + parcelCharges
-        val totalItemCount = finalItems.sumOf { it.totalQuantity }
-
+        val parcelCharges = finalItems.sumOf { (it.menuItem.parcelCharge ?: universalParcelCharge) * it.takeawayQuantity }
         _uiState.update {
             it.copy(
                 lineItems = finalItems,
                 subtotal = subtotal,
                 parcelCharges = parcelCharges,
-                total = total,
-                totalItemCount = totalItemCount
+                total = subtotal + parcelCharges,
+                totalItemCount = finalItems.sumOf { li -> li.totalQuantity }
             )
         }
     }
 
-    fun clearCart() {
-        updateCartState(emptyList())
-    }
+    fun clearCart() = updateCartState(emptyList())
 }
