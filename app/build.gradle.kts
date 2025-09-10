@@ -83,6 +83,9 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:realtime-kt:2.4.0")
     implementation("io.github.jan-tennert.supabase:storage-kt:2.4.0")
 
+    // Ktor client engine for Android (required by supabase-kt)
+    implementation("io.ktor:ktor-client-android:2.3.10")
+
     // Kotlinx Serialization for JSON handling
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
