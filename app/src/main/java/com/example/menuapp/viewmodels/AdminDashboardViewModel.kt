@@ -3,7 +3,7 @@ package com.example.menuapp.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.menuapp.data.models.Order
-import com.example.menuapp.data.repository.RestaurantRepository
+import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -17,10 +17,10 @@ data class AdminDashboardUiState(
 )
 
 /**
- * ViewModel for the [AdminDashboardScreen].
+ * ViewModel for the AdminDashboardScreen.
  */
 class AdminDashboardViewModel(
-    private val repository: RestaurantRepository = RestaurantRepository()
+    private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminDashboardUiState())
@@ -36,7 +36,7 @@ class AdminDashboardViewModel(
 
             val currentUser = repository.getCurrentUser()
             if (currentUser == null) {
-                _uiState.update { it.copy(isLoading = false, error = "Not logged in.") }
+                _uiState.update { it.copy(isLoading = false, error = "Not logged in. Please restart and log in.") }
                 return@launch
             }
 
@@ -46,7 +46,6 @@ class AdminDashboardViewModel(
                 return@launch
             }
 
-            // Start collecting the real-time flow of orders
             repository.getOrdersFlow(restaurantId)
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false, error = "Error listening for orders: ${e.message}") }
@@ -55,21 +54,16 @@ class AdminDashboardViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            allOrders = orders.sortedByDescending { order -> order.id } // Show newest first
+                            allOrders = orders.sortedByDescending { order -> order.id }
                         )
                     }
                 }
         }
     }
 
-    /**
-     * Updates the status of a given order.
-     */
     fun updateOrderStatus(orderId: Long, newStatus: String) {
         viewModelScope.launch {
             repository.updateOrderStatus(orderId, newStatus)
-            // The real-time flow will automatically emit the updated list,
-            // so we don't need to manually refresh the state here.
         }
     }
 

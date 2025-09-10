@@ -34,5 +34,3 @@ fun MenuAppTheme(
         content = content
     )
 }
-// I'll also need to create the Color.kt and Typography.kt files.
-// Let's create Color.kt first.

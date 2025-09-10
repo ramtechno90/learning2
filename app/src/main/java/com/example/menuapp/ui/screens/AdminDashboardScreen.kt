@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,18 +27,13 @@ fun AdminDashboardScreen(
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Pending", "Accepted", "Completed", "Rejected")
 
-    LaunchedEffect(Unit) {
-        // Here you could listen for a specific event from ViewModel to trigger sign out
-        // For now, it's handled by the sign out button.
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Admin Dashboard") },
                 actions = {
                     IconButton(onClick = onNavigateToManagement) {
-                        Icon(androidx.compose.material.icons.filled.Settings, contentDescription = "Manage")
+                        Icon(Icons.Default.Settings, contentDescription = "Manage")
                     }
                     IconButton(onClick = {
                         vm.signOut()

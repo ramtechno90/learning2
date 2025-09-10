@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.menuapp.data.models.MenuItem
 import com.example.menuapp.data.models.Restaurant
-import com.example.menuapp.data.repository.RestaurantRepository
+import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -35,27 +35,22 @@ data class CartUiState(
 
 /**
  * ViewModel to manage the state of the shopping cart.
- * This ViewModel is intended to be shared between MenuScreen, CartScreen, and InvoiceScreen.
  */
 class CartViewModel(
     private val restaurantId: Long,
-    private val repository: RestaurantRepository = RestaurantRepository()
+    private val repository: LocalRestaurantRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        // Fetch restaurant details to get universal parcel charge
         viewModelScope.launch {
             val restaurant = repository.getRestaurant(restaurantId)
             _uiState.update { it.copy(restaurant = restaurant) }
         }
     }
 
-    /**
-     * Adds a menu item to the cart. If it already exists, it defaults to increasing dine-in quantity.
-     */
     fun addItem(item: MenuItem) {
         val currentItems = _uiState.value.lineItems.toMutableList()
         val existingItem = currentItems.find { it.menuItem.id == item.id }
@@ -91,27 +86,22 @@ class CartViewModel(
         val item = currentItems.find { it.menuItem.id == itemId }
         if (item != null) {
             item.specialInstructions = instructions
-            _uiState.update { it.copy(lineItems = item.let{ currentItems }) } // No need to recalculate totals for this
+            _uiState.update { it.copy(lineItems = item.let{ currentItems }) }
         }
     }
 
-    /**
-     * Recalculates all totals and updates the UI state.
-     */
     private fun updateCartState(items: List<CartLineItem>) {
-        val subtotal = items.sumOf { it.menuItem.price * it.totalQuantity }
+        val finalItems = items.filter { it.totalQuantity > 0 }
+        val subtotal = finalItems.sumOf { it.menuItem.price * it.totalQuantity }
         val universalParcelCharge = _uiState.value.restaurant?.universalParcelCharge ?: 0.0
 
-        val parcelCharges = items.sumOf {
+        val parcelCharges = finalItems.sumOf {
             val charge = it.menuItem.parcelCharge ?: universalParcelCharge
             charge * it.takeawayQuantity
         }
 
         val total = subtotal + parcelCharges
-        val totalItemCount = items.sumOf { it.totalQuantity }
-
-        // Filter out items where both quantities are zero
-        val finalItems = items.filter { it.totalQuantity > 0 }
+        val totalItemCount = finalItems.sumOf { it.totalQuantity }
 
         _uiState.update {
             it.copy(

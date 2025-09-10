@@ -15,16 +15,16 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.menuapp.data.models.Category
 import com.example.menuapp.data.models.MenuItem
+import com.example.menuapp.viewmodels.CartViewModel
 import com.example.menuapp.viewmodels.MenuViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuScreen(
-    menuViewModel: MenuViewModel = viewModel(),
+    menuViewModel: MenuViewModel,
     cartViewModel: CartViewModel,
     onNavigateToCart: () -> Unit
 ) {
@@ -64,7 +64,7 @@ fun MenuScreen(
                     restaurant = menuUiState.restaurant!!,
                     categories = menuUiState.categories,
                     menuItems = menuUiState.menuItems,
-                    cartViewModel = cartViewModel
+                    onAddToCart = { cartViewModel.addItem(it) }
                 )
             }
         }
@@ -76,7 +76,7 @@ fun MenuContent(
     restaurant: com.example.menuapp.data.models.Restaurant,
     categories: List<Category>,
     menuItems: Map<Long, List<MenuItem>>,
-    cartViewModel: CartViewModel
+    onAddToCart: (MenuItem) -> Unit
 ) {
     var expandedCategories by remember { mutableStateOf(setOf<Long>()) }
 
@@ -84,7 +84,6 @@ fun MenuContent(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp)
     ) {
-        // Restaurant Logo Header
         item {
             AsyncImage(
                 model = restaurant.logoUrl,
@@ -97,7 +96,6 @@ fun MenuContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Menu items grouped by category
         items(categories, key = { it.id }) { category ->
             val itemsInCategory = menuItems[category.id] ?: emptyList()
             if (itemsInCategory.isNotEmpty()) {
@@ -116,10 +114,7 @@ fun MenuContent(
                 AnimatedVisibility(visible = category.id in expandedCategories) {
                     Column {
                         itemsInCategory.forEach { menuItem ->
-                            MenuItemCard(
-                                item = menuItem,
-                                onAddToCart = { cartViewModel.addItem(menuItem) }
-                            )
+                            MenuItemCard(item = menuItem, onAddToCart = { onAddToCart(menuItem) })
                         }
                     }
                 }

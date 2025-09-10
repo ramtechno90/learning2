@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.menuapp.viewmodels.CartLineItem
 import com.example.menuapp.viewmodels.CartViewModel
@@ -73,14 +74,12 @@ fun CartItemRow(
         Text(text = item.menuItem.name, style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Dine-in quantity
         QuantitySelector(
             label = "Dine-in",
             quantity = item.dineInQuantity,
             onQuantityChange = onDineInQuantityChange
         )
 
-        // Takeaway quantity
         QuantitySelector(
             label = "Takeaway",
             quantity = item.takeawayQuantity,
@@ -110,7 +109,7 @@ fun QuantitySelector(label: String, quantity: Int, onQuantityChange: (Int) -> Un
             IconButton(onClick = { onQuantityChange(quantity - 1) }, enabled = quantity > 0) {
                 Text("-")
             }
-            Text(text = quantity.toString(), modifier = Modifier.width(30.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            Text(text = quantity.toString(), modifier = Modifier.width(30.dp), textAlign = TextAlign.Center)
             IconButton(onClick = { onQuantityChange(quantity + 1) }) {
                 Text("+")
             }

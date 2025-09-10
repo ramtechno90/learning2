@@ -12,9 +12,6 @@ import androidx.compose.ui.unit.dp
 
 /**
  * The initial screen of the app, allowing the user to select their role.
- *
- * @param onCustomerSelected Callback to navigate to the customer flow.
- * @param onAdminSelected Callback to navigate to the admin flow.
  */
 @Composable
 fun RoleSelectionScreen(
@@ -39,7 +36,6 @@ fun RoleSelectionScreen(
             Text("Please select your role to continue:", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Customer Button
             Button(
                 onClick = onCustomerSelected,
                 modifier = Modifier
@@ -51,7 +47,6 @@ fun RoleSelectionScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Admin Button
             Button(
                 onClick = onAdminSelected,
                 modifier = Modifier

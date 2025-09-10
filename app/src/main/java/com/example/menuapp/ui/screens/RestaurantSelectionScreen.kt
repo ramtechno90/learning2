@@ -17,11 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.menuapp.viewmodels.RestaurantSelectionViewModel
 
 /**
- * The first screen of the application where the user selects a restaurant by its ID.
- *
- * @param onNavigateToMenu A callback function to trigger navigation to the menu screen,
- *                         passing the selected restaurant ID.
- * @param vm The ViewModel for this screen, defaults to a new instance.
+ * The screen where the user selects a restaurant by its ID.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

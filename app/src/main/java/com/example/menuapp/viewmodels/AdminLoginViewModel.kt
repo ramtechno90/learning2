@@ -2,7 +2,7 @@ package com.example.menuapp.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.menuapp.data.repository.RestaurantRepository
+import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,10 +26,10 @@ data class AdminLoginUiState(
 )
 
 /**
- * ViewModel for the [AdminLoginScreen].
+ * ViewModel for the AdminLoginScreen.
  */
 class AdminLoginViewModel(
-    private val repository: RestaurantRepository = RestaurantRepository()
+    private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminLoginUiState())
@@ -49,7 +49,6 @@ class AdminLoginViewModel(
 
             val result = try {
                 repository.signIn(_uiState.value.email, _uiState.value.password)
-                // Assuming signIn in repo now returns nothing on success and throws on error
                 AuthResult.Success
             } catch (e: Exception) {
                 AuthResult.Error(e.message ?: "An unknown error occurred.")

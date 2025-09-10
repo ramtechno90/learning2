@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.menuapp.data.models.Category
 import com.example.menuapp.data.models.MenuItem
 import com.example.menuapp.data.models.Restaurant
-import com.example.menuapp.data.repository.RestaurantRepository
+import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,15 +21,13 @@ data class MenuUiState(
 )
 
 /**
- * ViewModel for the [MenuScreen].
- *
- * Fetches and manages the state for the restaurant menu.
+ * ViewModel for the MenuScreen.
  */
 class MenuViewModel(
-    savedStateHandle: SavedStateHandle,
-    private val repository: RestaurantRepository = RestaurantRepository() // Manual dependency injection for simplicity
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
     private val restaurantId: Long = checkNotNull(savedStateHandle["restaurantId"]).toString().toLong()
 
     private val _uiState = MutableStateFlow(MenuUiState())

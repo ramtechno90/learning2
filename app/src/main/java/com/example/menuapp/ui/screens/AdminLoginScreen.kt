@@ -29,7 +29,7 @@ fun AdminLoginScreen(
             }
             is AuthResult.Error -> {
                 snackbarHostState.showSnackbar(message = result.message)
-                vm.resetAuthResult() // Reset after showing
+                vm.resetAuthResult()
             }
             null -> {}
         }
