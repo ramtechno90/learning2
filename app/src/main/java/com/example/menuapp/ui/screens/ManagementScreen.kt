@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.menuapp.data.models.Category
 import com.example.menuapp.data.models.MenuItem
+import com.example.menuapp.data.models.Restaurant
 import com.example.menuapp.viewmodels.ManagementViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -166,7 +167,6 @@ fun NameEditDialog(
         }
     )
 }
-
 
 @Composable
 fun MenuItemManagementTab(
