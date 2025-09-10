@@ -77,15 +77,11 @@ dependencies {
     // ViewModel for Jetpack Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    // Supabase Bill of Materials (BOM) - manages versions for Supabase libraries
-    val supabaseBom = platform("io.github.jan-tennert.supabase:bom:2.4.0")
-    implementation(supabaseBom)
-
     // Supabase libraries for database, auth, realtime, and storage
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.github.jan-tennert.supabase:gotrue-kt")
-    implementation("io.github.jan-tennert.supabase:realtime-kt")
-    implementation("io.github.jan-tennert.supabase:storage-kt")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.4.0")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.4.0")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:2.4.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.4.0")
 
     // Kotlinx Serialization for JSON handling
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
