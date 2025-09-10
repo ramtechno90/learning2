@@ -1,32 +1,28 @@
 package com.example.menuapp.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
+// For this redesign, we will focus on a light theme, similar to the Swiggy app.
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = SwiggyOrange,
+    secondary = SwiggyOrangeVariant,
+    background = BackgroundGray,
+    surface = White,
+    onPrimary = White,
+    onSecondary = White,
+    onBackground = TextBlack,
+    onSurface = TextBlack,
+    error = Color.Red
 )
 
 @Composable
 fun MenuAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

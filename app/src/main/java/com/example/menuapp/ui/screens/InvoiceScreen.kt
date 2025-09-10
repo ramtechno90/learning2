@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.menuapp.ui.theme.SwiggyOrange
 import com.example.menuapp.viewmodels.CartViewModel
 import com.example.menuapp.viewmodels.InvoiceViewModel
 import com.example.menuapp.viewmodels.OrderPlacementState
@@ -28,75 +29,70 @@ fun InvoiceScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Confirm Your Order") })
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text("Order Summary", style = MaterialTheme.typography.headlineSmall)
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(cartState.lineItems) { item ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("${item.totalQuantity}x ${item.menuItem.name}")
-                        Text("$${"%.2f".format(item.menuItem.price * item.totalQuantity)}")
-                    }
-                }
-                item {
-                    Column {
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
-                        SummaryRow("Subtotal:", "$${"%.2f".format(cartState.subtotal)}")
-                        SummaryRow("Parcel Charges:", "$${"%.2f".format(cartState.parcelCharges)}")
-                        SummaryRow("Grand Total:", "$${"%.2f".format(cartState.total)}", isBold = true)
-                    }
-                }
-            }
-
-            OutlinedTextField(
-                value = customerName,
-                onValueChange = { invoiceViewModel.onCustomerNameChange(it) },
-                label = { Text("Your Name") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            TopAppBar(
+                title = { Text("Confirm Your Order") },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface, titleContentColor = MaterialTheme.colorScheme.onSurface)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-
+        },
+        bottomBar = {
             Button(
                 onClick = { invoiceViewModel.placeOrder(cartState) },
                 enabled = customerName.isNotBlank() && orderPlacementState is OrderPlacementState.Idle,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Place Order")
-            }
+                modifier = Modifier.fillMaxWidth().padding(16.dp).height(50.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.buttonColors(containerColor = SwiggyOrange)
+            ) { Text("Place Order") }
         }
-
-        when (val state = orderPlacementState) {
-            is OrderPlacementState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-            is OrderPlacementState.Success -> {
-                SuccessDialog(
-                    orderNumber = state.order.dailyOrderNumber,
-                    onDismiss = {
-                        cartViewModel.clearCart()
-                        invoiceViewModel.resetOrderState()
-                        onOrderPlacedSuccessfully()
+    ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
+                Text("Order Summary", style = MaterialTheme.typography.headlineSmall)
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(cartState.lineItems) { item ->
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("${item.totalQuantity}x ${item.menuItem.name}")
+                            Text("$${"%.2f".format(item.menuItem.price * item.totalQuantity)}")
+                        }
                     }
+                    item {
+                        Column {
+                            Divider(modifier = Modifier.padding(vertical = 8.dp))
+                            SummaryRow("Subtotal:", "$${"%.2f".format(cartState.subtotal)}")
+                            SummaryRow("Parcel Charges:", "$${"%.2f".format(cartState.parcelCharges)}")
+                            SummaryRow("Grand Total:", "$${"%.2f".format(cartState.total)}", isBold = true)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = customerName,
+                    onValueChange = { invoiceViewModel.onCustomerNameChange(it) },
+                    label = { Text("Your Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.medium
                 )
             }
-            is OrderPlacementState.Error -> {
-                ErrorDialog(
-                    message = state.message,
-                    onDismiss = { invoiceViewModel.resetOrderState() }
-                )
+            when (val state = orderPlacementState) {
+                is OrderPlacementState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                }
+                is OrderPlacementState.Success -> {
+                    SuccessDialog(
+                        orderNumber = state.order.dailyOrderNumber,
+                        onDismiss = {
+                            cartViewModel.clearCart()
+                            invoiceViewModel.resetOrderState()
+                            onOrderPlacedSuccessfully()
+                        }
+                    )
+                }
+                is OrderPlacementState.Error -> {
+                    ErrorDialog(message = state.message, onDismiss = { invoiceViewModel.resetOrderState() })
+                }
+                else -> {}
             }
-            else -> {}
         }
     }
 }
@@ -107,11 +103,7 @@ fun SuccessDialog(orderNumber: Long, onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text("Order Placed!") },
         text = { Text("Your order number is #$orderNumber. Thank you!") },
-        confirmButton = {
-            Button(onClick = onDismiss) {
-                Text("OK")
-            }
-        }
+        confirmButton = { Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = SwiggyOrange)) { Text("OK") } }
     )
 }
 
@@ -121,10 +113,6 @@ fun ErrorDialog(message: String, onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text("Order Failed") },
         text = { Text(message) },
-        confirmButton = {
-            Button(onClick = onDismiss) {
-                Text("OK")
-            }
-        }
+        confirmButton = { Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = SwiggyOrange)) { Text("OK") } }
     )
 }

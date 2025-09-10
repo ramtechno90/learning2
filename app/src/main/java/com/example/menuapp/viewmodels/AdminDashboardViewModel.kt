@@ -7,18 +7,12 @@ import com.example.menuapp.data.repository.LocalRestaurantRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-/**
- * UI state for the Admin Dashboard screen.
- */
 data class AdminDashboardUiState(
     val allOrders: List<Order> = emptyList(),
     val isLoading: Boolean = true,
     val error: String? = null
 )
 
-/**
- * ViewModel for the AdminDashboardScreen.
- */
 class AdminDashboardViewModel(
     private val repository: LocalRestaurantRepository = LocalRestaurantRepository()
 ) : ViewModel() {
@@ -33,23 +27,18 @@ class AdminDashboardViewModel(
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-
             val currentUser = repository.getCurrentUser()
             if (currentUser == null) {
                 _uiState.update { it.copy(isLoading = false, error = "Not logged in. Please restart and log in.") }
                 return@launch
             }
-
             val restaurantId = repository.getRestaurantIdForUser(currentUser.id)
             if (restaurantId == null) {
                 _uiState.update { it.copy(isLoading = false, error = "User not associated with any restaurant.") }
                 return@launch
             }
-
             repository.getOrdersFlow(restaurantId)
-                .catch { e ->
-                    _uiState.update { it.copy(isLoading = false, error = "Error listening for orders: ${e.message}") }
-                }
+                .catch { e -> _uiState.update { it.copy(isLoading = false, error = "Error listening for orders: ${e.message}") } }
                 .collect { orders ->
                     _uiState.update {
                         it.copy(
@@ -62,14 +51,10 @@ class AdminDashboardViewModel(
     }
 
     fun updateOrderStatus(orderId: Long, newStatus: String) {
-        viewModelScope.launch {
-            repository.updateOrderStatus(orderId, newStatus)
-        }
+        viewModelScope.launch { repository.updateOrderStatus(orderId, newStatus) }
     }
 
     fun signOut() {
-        viewModelScope.launch {
-            repository.signOut()
-        }
+        viewModelScope.launch { repository.signOut() }
     }
 }

@@ -68,7 +68,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended") // For more icons
+    implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
@@ -78,7 +78,7 @@ dependencies {
     // ViewModel for Jetpack Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    // Kotlinx Serialization for JSON handling (still useful for data models)
+    // Kotlinx Serialization for JSON handling
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     // Coil for asynchronous image loading

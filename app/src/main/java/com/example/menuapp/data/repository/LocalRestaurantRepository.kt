@@ -8,11 +8,9 @@ import kotlinx.coroutines.flow.map
 
 /**
  * An in-memory implementation of the repository for local development and testing.
- * This class simulates a backend database using mutable lists and flows.
  */
 class LocalRestaurantRepository {
 
-    // --- In-Memory Data Store ---
     private val restaurants = mutableListOf(
         Restaurant(id = 1, name = "The Burger Palace", universalParcelCharge = 1.50, logoUrl = "https://firebasestorage.googleapis.com/v0/b/fir-chat-6d859.appspot.com/o/restaurants%2Fburger.png?alt=media&token=8b3758da-e646-4464-8557-c157f12239f2"),
         Restaurant(id = 2, name = "Pizza Heaven", universalParcelCharge = 2.00, logoUrl = "https://firebasestorage.googleapis.com/v0/b/fir-chat-6d859.appspot.com/o/restaurants%2Fpizza.png?alt=media&token=e1150897-47b2-4879-a799-23c3b313d332")
@@ -39,80 +37,45 @@ class LocalRestaurantRepository {
     private var isUserLoggedIn = false
     data class FakeUser(val id: String)
 
-    // --- Public API ---
-
-    suspend fun getRestaurant(restaurantId: Long): Restaurant? {
-        return restaurants.find { it.id == restaurantId }
-    }
-
-    suspend fun getCategories(restaurantId: Long): List<Category> {
-        return categories.value.filter { it.restaurantId == restaurantId }
-    }
-
-    suspend fun getMenuItems(restaurantId: Long): List<MenuItem> {
-        return menuItems.value.filter { it.restaurantId == restaurantId }
-    }
+    suspend fun getRestaurant(restaurantId: Long): Restaurant? = restaurants.find { it.id == restaurantId }
+    suspend fun getCategories(restaurantId: Long): List<Category> = categories.value.filter { it.restaurantId == restaurantId }
+    suspend fun getMenuItems(restaurantId: Long): List<MenuItem> = menuItems.value.filter { it.restaurantId == restaurantId }
 
     suspend fun placeOrder(order: Order): Order {
-        val newOrder = order.copy(
-            id = orderIdCounter++,
-            status = "Pending",
-            dailyOrderNumber = (orders.value.count { it.status == "Pending" } + 1).toLong()
-        )
-        val currentOrders = orders.value.toMutableList()
-        currentOrders.add(newOrder)
-        orders.value = currentOrders
+        val newOrder = order.copy(id = orderIdCounter++, status = "Pending", dailyOrderNumber = (orders.value.count { it.status == "Pending" } + 1).toLong())
+        orders.value = (orders.value + newOrder).toMutableList()
         return newOrder
     }
 
-    // --- Admin Functions ---
-
     suspend fun signIn(email: String, password: String) {
-        if (email != "admin@example.com" || password != "password") {
-            throw Exception("Invalid credentials. Use admin@example.com and password.")
-        }
+        if (email != "admin@example.com" || password != "password") throw Exception("Invalid credentials.")
         isUserLoggedIn = true
     }
 
-    suspend fun signOut() {
-        isUserLoggedIn = false
-    }
-
-    fun getCurrentUser(): FakeUser? {
-        return if (isUserLoggedIn) FakeUser(id = "fake-admin-user-id") else null
-    }
-
+    suspend fun signOut() { isUserLoggedIn = false }
+    fun getCurrentUser(): FakeUser? = if (isUserLoggedIn) FakeUser("fake-admin-user-id") else null
     suspend fun getRestaurantIdForUser(userId: String): Long? = 1L
-
-    fun getOrdersFlow(restaurantId: Long): Flow<List<Order>> {
-        return orders.asStateFlow().map { orderList ->
-            orderList.filter { it.restaurantId == restaurantId }
-        }
-    }
+    fun getOrdersFlow(restaurantId: Long): Flow<List<Order>> = orders.asStateFlow().map { list -> list.filter { it.restaurantId == restaurantId } }
 
     suspend fun updateOrderStatus(orderId: Long, newStatus: String) {
-        val currentOrders = orders.value.toMutableList()
-        val orderIndex = currentOrders.indexOfFirst { it.id == orderId }
-        if (orderIndex != -1) {
-            currentOrders[orderIndex] = currentOrders[orderIndex].copy(status = newStatus)
-            orders.value = currentOrders
+        val list = orders.value
+        val index = list.indexOfFirst { it.id == orderId }
+        if (index != -1) {
+            list[index] = list[index].copy(status = newStatus)
+            orders.value = list
         }
     }
 
-    // --- Management Functions ---
-
     suspend fun addMenuItem(item: MenuItem) {
-        val currentItems = menuItems.value.toMutableList()
-        currentItems.add(item.copy(id = (menuItems.value.maxOfOrNull { it.id } ?: 0) + 1))
-        menuItems.value = currentItems
+        menuItems.value = (menuItems.value + item.copy(id = (menuItems.value.maxOfOrNull { it.id } ?: 0) + 1)).toMutableList()
     }
 
     suspend fun updateMenuItem(item: MenuItem) {
-        val currentItems = menuItems.value.toMutableList()
-        val index = currentItems.indexOfFirst { it.id == item.id }
+        val list = menuItems.value
+        val index = list.indexOfFirst { it.id == item.id }
         if (index != -1) {
-            currentItems[index] = item
-            menuItems.value = currentItems
+            list[index] = item
+            menuItems.value = list
         }
     }
 
@@ -121,17 +84,15 @@ class LocalRestaurantRepository {
     }
 
     suspend fun addCategory(category: Category) {
-        val currentCategories = categories.value.toMutableList()
-        currentCategories.add(category.copy(id = (categories.value.maxOfOrNull { it.id } ?: 0) + 1))
-        categories.value = currentCategories
+        categories.value = (categories.value + category.copy(id = (categories.value.maxOfOrNull { it.id } ?: 0) + 1)).toMutableList()
     }
 
     suspend fun updateCategory(category: Category) {
-        val currentCategories = categories.value.toMutableList()
-        val index = currentCategories.indexOfFirst { it.id == category.id }
+        val list = categories.value
+        val index = list.indexOfFirst { it.id == category.id }
         if (index != -1) {
-            currentCategories[index] = category
-            categories.value = currentCategories
+            list[index] = category
+            categories.value = list
         }
     }
 
@@ -141,15 +102,11 @@ class LocalRestaurantRepository {
 
     suspend fun updateRestaurantDetails(id: Long, name: String, universalParcelCharge: Double) {
         val index = restaurants.indexOfFirst { it.id == id }
-        if (index != -1) {
-            restaurants[index] = restaurants[index].copy(name = name, universalParcelCharge = universalParcelCharge)
-        }
+        if (index != -1) restaurants[index] = restaurants[index].copy(name = name, universalParcelCharge = universalParcelCharge)
     }
 
     suspend fun updateRestaurantLogoUrl(restaurantId: Long, logoUrl: String) {
         val index = restaurants.indexOfFirst { it.id == restaurantId }
-        if (index != -1) {
-            restaurants[index] = restaurants[index].copy(logoUrl = logoUrl)
-        }
+        if (index != -1) restaurants[index] = restaurants[index].copy(logoUrl = logoUrl)
     }
 }

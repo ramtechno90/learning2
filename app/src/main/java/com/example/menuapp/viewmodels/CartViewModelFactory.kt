@@ -4,9 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.menuapp.data.repository.LocalRestaurantRepository
 
-/**
- * Factory for creating a [CartViewModel] with a constructor that takes dependencies.
- */
 @Suppress("UNCHECKED_CAST")
 class CartViewModelFactory(
     private val restaurantId: Long,
