@@ -65,7 +65,7 @@ private fun NavGraphBuilder.customerRestaurantFlow(navController: NavHostControl
 private fun NavGraphBuilder.adminFlow(navController: NavHostController) {
     navigation(startDestination = Screen.AdminLogin.route, route = Screen.AdminFlow.route) {
         composable(Screen.AdminLogin.route) {
-            AdminLoginScreen { navController.navigate(Screen.AdminDashboard.route) { popUpTo(Screen.AdminLogin.route) { inclusive = true } } }
+            AdminLoginScreen(onLoginSuccess = { navController.navigate(Screen.AdminDashboard.route) { popUpTo(Screen.AdminLogin.route) { inclusive = true } } })
         }
         composable(Screen.AdminDashboard.route) {
             AdminDashboardScreen(
