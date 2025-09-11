@@ -49,7 +49,12 @@ fun AdminDashboardScreen(
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 containerColor = MaterialTheme.colorScheme.surface,
-                indicator = { tabPositions -> TabRowDefaults.Indicator(Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]), color = SwiggyOrange) }
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = SwiggyOrange
+                    )
+                }
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(

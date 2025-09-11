@@ -42,7 +42,12 @@ fun ManagementScreen(vm: ManagementViewModel = viewModel()) {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 containerColor = MaterialTheme.colorScheme.surface,
-                indicator = { tabPositions -> TabRowDefaults.Indicator(Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]), color = SwiggyOrange) }
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = SwiggyOrange
+                    )
+                }
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
@@ -131,7 +136,10 @@ fun MenuItemManagementTab(menuItems: List<MenuItem>, categories: List<Category>,
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { isEditing = false; showDialog = MenuItem(0, "", 0.0, categories.firstOrNull()?.id ?: 0, 0) },
+                onClick = {
+                    isEditing = false
+                    showDialog = MenuItem(id = 0, name = "", price = 0.0, description = null, category = categories.firstOrNull()?.id ?: 0, restaurantId = 0)
+                },
                 containerColor = SwiggyOrange
             ) { Icon(Icons.Default.Add, "Add Menu Item", tint = Color.White) }
         }
