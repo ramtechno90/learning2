@@ -22,6 +22,7 @@ import com.example.menuapp.data.models.MenuItem
 import com.example.menuapp.data.models.Restaurant
 import com.example.menuapp.ui.theme.SwiggyOrange
 import com.example.menuapp.viewmodels.ManagementViewModel
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
